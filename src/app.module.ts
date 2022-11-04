@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RestaurantsModule } from './restaurants/restaurants.module';
+import { Restaurant } from './restaurants/entities/restaurant.entity';
 
 @Module({
   imports: [
@@ -28,8 +29,9 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      synchronize: true, //? TypeORM이 DB를 나의 모듈의 현재 상태로 마이그래이션 해줌
+      synchronize: process.env.NODE_ENV !== 'prod', //? TypeORM이 DB를 나의 모듈의 현재 상태로 마이그래이션 해줌
       logging: true, //? DB에서 무슨 일이 일어나는지 콘솔에 표시해줌
+      entities: [Restaurant], //? DB에 저장할 entity를 지정
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
