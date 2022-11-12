@@ -9,12 +9,13 @@ import { CreateAccountInput } from './dtos/create-account.dto';
 import { LoginInput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from 'src/jwt/jwt.service';
 
 @Injectable() //? injectable decorator를 사용하여 NestJS가 이 클래스를 inject할 수 있도록 함
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>, //? InjectRepository()를 사용하여 User entity를 사용할 수 있도록 함
-    private readonly config: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async createAccount({
@@ -61,7 +62,7 @@ export class UsersService {
           error: '비밀번호가 일치하지 않습니다.',
         };
       }
-      const token = jwt.sign({ id: user.id }, this.config.get('SECRET_KEY'));
+      const token = this.jwtService.sign(user.id);
       return {
         ok: true,
         token,
@@ -72,5 +73,9 @@ export class UsersService {
         error,
       };
     }
+  }
+
+  async findById(id: number): Promise<User> {
+    return this.users.findOne({ where: { id } });
   }
 }

@@ -12,8 +12,8 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { IsEmail, IsEnum } from 'class-validator';
 
 enum UserRole {
-  Owner,
   Client,
+  Owner,
   Delivery,
 }
 

@@ -1,7 +1,10 @@
 //* resolver란?
 //* resolver는 GraphQL의 query, mutation, subscription을 처리하는 함수들을 모아놓은 것
 //* resolver는 node에서 controller와 비슷한 역할을 함
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { AuthUser } from 'src/auth/auth-user.decorator';
+import { AuthGuard } from 'src/auth/auth.guard';
 import {
   CreateAccountInput,
   CreateAccountOutput,
@@ -43,5 +46,11 @@ export class UsersResolver {
         ok: false,
       };
     }
+  }
+
+  @Query(() => User)
+  @UseGuards(AuthGuard)
+  me(@AuthUser() authUser: User) {
+    return authUser;
   }
 }
